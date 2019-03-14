@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">AiPi Bot</legend>
+                <!-- {{ form.user.label(class='form-control-label') }} -->
+                <!-- {{ form.user.label(class='form-control-label') }} -->
+                <p>This is bot</p> 
+        </fieldset>
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">User not Bot</legend>
+                <!-- {{ form.user.label(class='form-control-label') }} -->
+                {{ form.user(class='form-control form-control-lg') }}
+            
+        </fieldset>
+        <fieldset>
+                {{ form.submit(class='btn btn-outline-info') }}
+        </fieldset>
+    </form>
+</div>
+
+{% endblock %}

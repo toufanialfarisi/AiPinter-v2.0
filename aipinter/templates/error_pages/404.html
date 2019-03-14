@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+     <!-- JUMBOTRON -->
+     <div class="col-md-12">
+        <div class="content-section">
+            <div class="jumbotron-fluid">
+                <h1 class="display-4">Error 404</h1>
+                <p class="lead">The page which you are searching for was not found</p>
+                <hr class="my-4">
+                <a class="btn btn-primary btn-lg" href="{{url_for('core.index')}}" role="button">Back to Home</a>
+            </div>
+        </div>
+        </div>
+
+{% endblock %}

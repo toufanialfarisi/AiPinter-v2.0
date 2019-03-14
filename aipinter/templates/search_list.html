@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="col-md-12">
+        <form action="" method="POST" enctype="multipart/form-data">
+    
+          {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <table width='100%'>
+              <tr>
+                <td>{{ form.search(class='form-control form-control-md') }}</td>
+                <td></td>
+                <td>{{ form.submit(class='btn btn-outline-info') }}</td>
+              </tr>
+            </table>
+        </fieldset>
+        </form>
+    </div>
+
+<div class="col-md-12">
+        {% for post in posts %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ post.author }}</a>
+              <!-- <small class="text-muted">{{ post.date_posted }}</small> -->
+            </div>
+            <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
+            <a href="http://localhost:5000/edit/{{ post.id_post }}"><button class="btn btn-outline-info" type="button">Edit</button></a>
+            <a href="http://localhost:5000/delete/{{ post.id_post }}"><button class="btn btn-outline-info" type="button">Delete</button></a>
+          </div>
+          
+        </article>
+        
+      {% endfor %}
+      </div>
+
+{% endblock %}

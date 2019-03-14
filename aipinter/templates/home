@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+
+    {% if title %}
+        <title>AiPinter - {{ title }}</title>
+    {% else %}
+        <title>AiPinter</title>
+    {% endif %}
+</head>
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <a class="navbar-brand mr-4" href="/"><img src="static/img/logo.png" alt="" width="150px" height="50px"></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item nav-link" href="/cvision">Vision</a>
+              <a class="nav-item nav-link" href="/camera">Camera</a>
+              <a class="nav-item nav-link" href="/chatbot">Chatbot</a>
+              <a class="nav-item nav-link" href="/forecasting">Forecasting</a>
+            </div>
+
+            {% if current_user.is_authenticated %}
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" href="{{ url_for('post') }}">Post</a>
+              <a class="nav-item nav-link" href="{{ url_for('logout') }}">logout</a>
+            </div>
+            {% else %}
+            </div>
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" href="/login">Login</a>
+              <a class="nav-item nav-link" href="/register">Register</a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <!-- FLASH -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}"> {{ message }} </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+          {% block content %}{% endblock %}
+        </div>
+
+        {% if current_user.is_authenticated %}
+
+        {% else %}
+        <!-- JUMBOTRON -->
+        <div class="col-md-12">
+        <div class="content-section">
+            <div class="jumbotron-fluid">
+                <h1 class="display-4">AiPinter Platform</h1>
+                <p class="lead">computer vision, forecasting model and chatbot model</p>
+                <hr class="my-4">
+                <p>This is a simple platform to deploy your own machine learning model such as computer vision, forecasting model and chatbot model</p>
+                <a class="btn btn-primary btn-lg" href="{{url_for('login')}}" role="button">start deploying</a>
+            </div>
+        </div>
+        </div>
+        {% endif %}
+
+        <div class="col-md-12">
+            {% for post in mypost %}
+            <article class="media content-section">
+              <div class="media-body">
+                <div class="article-metadata">
+                  <a class="mr-2" href="#">{{ post.author }}</a>
+                  <!-- <small class="text-muted">{{ post.date_posted }}</small> -->
+                </div>
+                <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
+                <p class="article-content">{{ post.content }}</p>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="col-md-6">
+            {% for containers in container %}
+            <article class="media content-section" style="text-align:center ; margin-left:auto ; margin-right:auto">
+              <div class="media-body">
+    
+                <h2><img src="{{ containers.image_file  }}" width="80%" style="text-align:center ; border-radius: 0%; margin-left:auto ; margin-right:auto"></h2>
+                <!-- <p class="article-content">{{ containers.description }}</p> -->
+                <ul class="list-group">
+                  <li class="list-group-item list-group-item-light"> Confidence :  {{ containers.prediction_val * 100}}</li>
+                  <li class="list-group-item list-group-item-light"> Class :  {{ containers.prediction_class }}</li>
+                  <li class="list-group-item list-group-item-light"> Description : {{ containers.description }}</li>
+
+
+                </ul>
+              </div>
+            </article>
+          {% endfor %}
+          </div>
+          {% else %}
+
+          {% endif %}
+
+        <div class="col-md-6">
+            <div class="content-section">
+              <h4>Our Engine</h4>
+              <p class='text-muted'>Machine learning engine services.
+                <ul class="list-group">
+                  <li class="list-group-item list-group-item-light">Vision</li>
+                  <li class="list-group-item list-group-item-light">Chatbot</li>
+                  <li class="list-group-item list-group-item-light">Forecasting</li>
+                  <li class="list-group-item list-group-item-light">etc</li>
+                </ul>
+              </p>
+            </div>
+          </div>
+
+            
+
+<!-- 
+        <div class="col-md-4">
+          <div class="content-section">
+            <h4>Our Engine</h4>
+            <p class='text-muted'>Machine learning engine services.
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light">Image Vision</li>
+                <li class="list-group-item list-group-item-light">Chatbot</li>
+                <li class="list-group-item list-group-item-light">Forecasting</li>
+                <li class="list-group-item list-group-item-light">etc</li>
+              </ul>
+            </p>
+          </div>
+        </div> -->
+      </div>
+    </main>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

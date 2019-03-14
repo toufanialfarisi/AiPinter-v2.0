@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% if req == 'ssd' %}
+<div class="col-md-12">
+
+<fieldset class="form-group">
+<legend class="border-bottom mb-4">Video streaming</legend>
+<div style="text-align:center ; margin-left:auto ; margin-right:auto">
+    <img src="{{ url_for('calc_ssd') }}">
+    <legend class="border-bottom mb-4">SSD MobileNet Mode</legend>
+</div>
+</fieldset>
+</div>
+
+{% elif req == 'ord' %}
+<div class="col-md-12">
+<fieldset class="form-group">
+<legend class="border-bottom mb-4">Video streaming</legend>
+<div style="text-align:center ; margin-left:auto ; margin-right:auto">
+    <img src="{{ url_for('calc_ord') }}">
+    <legend class="border-bottom mb-4">Orinary CNN Mode</legend>
+</div>
+</fieldset>
+</div>
+
+{% else %}
+<div class="col-md-12">
+<fieldset class="form-group">
+<legend class="border-bottom mb-4">Video streaming</legend>
+<div style="text-align:center ; margin-left:auto ; margin-right:auto">
+    <img src="{{ url_for('calc_norm') }}">
+    <legend class="border-bottom mb-4">Normal Mode</legend>
+</div>
+</fieldset>
+</div>
+
+{% endif %}
+
+<div class="col-md-12">
+<div class="content-section">
+    <form action="" method="POST" enctype="multipart/form-data">
+
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+                {{ form.choose_cam.label(class='form-control-label') }}
+                <select class="form-control form-control-lg" name="camera">
+                        <option>Normal</option>
+                    <option>Ordinary_CNN</option>
+                    <option>SSD_Mobile_Net</option>
+                </select>
+                
+
+        </fieldset>
+        <fieldset class="form-group">
+            {{ form.submit(class='btn btn-outline-info') }}
+
+        </fieldset>
+        
+</div>
+</div>
+
+{% endblock%}
