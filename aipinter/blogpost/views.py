@@ -1,4 +1,4 @@
-from flask import redirect, url_for, render_template, Blueprint, flash
+from flask import redirect, url_for, render_template, Blueprint, flash, request
 from aipinter.blogpost.forms import Post
 from aipinter import db
 from aipinter.models import BlogPost
@@ -19,4 +19,41 @@ def post():
             return redirect(url_for('core.index'))
         return render_template('post.html', form=form)
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('core.login'))
+
+@blogpost.route('/edit/<int:id>', methods=['POST', 'GET'])
+def edit(id):
+    form = Post()
+    post = BlogPost.query.get(id)
+    if request.method == 'POST':
+        post.author = request.form['author']
+        post.title = request.form['title']
+        post.content = request.form['content']
+        db.session.add(post)
+        # db.session.flush()
+        db.session.commit()
+        flash('post suceessfull edited', 'success')
+        return redirect(url_for('core.index'))
+    else:
+        return render_template('edit_post.html', form=form, post=post)
+
+@blogpost.route('/delete/<int:id>', methods=['POST','GET'])
+def delete(id):
+    post = BlogPost.query.filter_by(id_post=id).first()
+    db.session.delete(post)
+    db.session.commit()
+    flash('Post successfully deleted', 'success')
+    return redirect(url_for('core.index'))
+
+@blogpost.route('/search', methods=['POST', 'GET'])
+def search():
+    searchForm = SearchForm()
+    post = Post_article.query
+
+    if searchForm.validate_on_submit():
+        post = post.filter(Post_article.title.like('%' + searchForm.search.data + '%'))
+
+        post = post.order_by(Post_article.title).all()
+        return render_template('search_list.html', posts = post, form = searchForm)
+    else:
+        return render_template('search.html', form = searchForm)
