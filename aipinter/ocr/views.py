@@ -3,6 +3,7 @@ import cv2
 import os
 import mahotas
 from flask import render_template, url_for, redirect, flash, Blueprint, request
+from flask_login import login_required
 from aipinter.ocr.forms import OCRForm
 from werkzeug.utils import secure_filename
 from aipinter import ALLOWED_EXTENSIONS
@@ -17,7 +18,9 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @ocreg.route('/ocr', methods=['POST', 'GET'])
+@login_required
 def ocr():
     
     form = OCRForm()
@@ -78,11 +81,12 @@ def ocr():
             img_file_path = os.path.join(os.getcwd() + '/aipinter/static/ocr_images', filename)
             cv2.imwrite(img_file_path, image)
 
-            ocr_img = OCR(image_file=img_file_path, description='this is ocr')
+            ocr_img = OCR(image_file=img_file_path, description=form.description.data)
             db.session.add(ocr_img)
             db.session.commit()
 
             i = OCR.query.filter_by(id=ocr_img.id).first()
-            return render_template('ocr.html', title='Vision',form=form, containers=i, os=os)    
+            flash('OCR sucessfully running', 'success')
+            return render_template('ocr.html', title='Vision',form=form, containers=i, os=os, desc=i.description)    
 
     return render_template('ocr.html', title='Vision',form=form)     
