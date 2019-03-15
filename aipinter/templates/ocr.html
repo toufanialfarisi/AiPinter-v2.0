@@ -1,17 +1,17 @@
 {% extends "layout.html" %}
 
 {% block content %}
-{% if file_url == 'ocr' %}
-<div class="col-md-12">
-
-    <fieldset class="form-group">
-    <legend class="border-bottom mb-4">Video streaming</legend>
-    <div style="text-align:center ; margin-left:auto ; margin-right:auto">
-        <img src="{{ url_for('calc_ocr') }}">
-        <legend class="border-bottom mb-4">SSD MobileNet Mode</legend>
-    </div>
-    </fieldset>
-    </div>
+{% if containers %}
+    <div class="content-section">
+    <center>
+            {% set dir1 = containers.image_file.split('/')[-2:][0] %}
+            {% set dir2 = containers.image_file.split('/')[-2:][1] %}
+        <img alt="" src="{{ os.path.join('static',dir1, dir2)  }}" width="30%" style="text-align:center ; border-radius: 10%;; margin-left:auto ; margin-right:auto"> 
+        <blockquote class="blockquote">
+            <footer class="blockquote-footer">{{ form.description.data }}</footer>
+        </blockquote>
+    </center>
+</div>
 {% else %}
 
     <!-- <legend class="border-bottom mb-4">Classification</legend> -->
@@ -19,38 +19,15 @@
 {% endif %}
 
 
-
 <div class="content-section">
 
         <form action="" method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
+
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4"> Crack Detector </legend>
-
-                
-                {{ form.picture.label(class='from-control-label') }}
-                {% if form.picture.errors %}
-                    {% for error in form.picture.errors %}
-                    <span>
-                        <span style="color: red;">{{ error }}</span>
-                    </span>
-                    {% endfor %}
-                {% endif %}
-                {{ form.picture(class='form-control-file') }}
-
-            </fieldset>
-                
-                {{ form.description.label(class='form-control-label') }}
-                
-                {% if form.description.errors %}
-                <div class='invalid-feedback'>
-                    {% for error in form.description.errors %}
-                        <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-                {{ form.description(class='form-control form-control-lg') }}
-
+                <legend class="border-bottom mb-4">Upload image</legend>
+                    {{ form.picture.label(class='form-control-label') }}
+                    <input type=file name=file class="form-control form-control-sd" name="title">
             </fieldset>
 
             <fieldset class="form-group">
