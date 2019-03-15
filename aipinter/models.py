@@ -19,7 +19,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     # This connects BlogPosts to a User Author.
-    posts = db.relationship('BlogPost', backref='author', lazy=True)
+    # posts = db.relationship('BlogPost', backref='author', lazy=True)
 
     def __init__(self, email, username, password):
         self.email = email
@@ -45,25 +45,40 @@ class User(db.Model, UserMixin):
 
 
 class BlogPost(db.Model):
-    # Setup the relationship to the User table
-    users = db.relationship(User)
 
-    # Model for the Blog Posts on Website
-    id = db.Column(db.Integer, primary_key=True)
-    # Notice how we connect the BlogPost to a particular author
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    title = db.Column(db.String(140), nullable=False)
-    text = db.Column(db.Text, nullable=False)
+    __tablename__ = 'blogpost'
 
-    def __init__(self, title, text, user_id):
-        self.title = title
-        self.text = text
-        self.user_id =user_id
+    id_post = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+    author = db.Column(db.String(20), unique=False, nullable=False)
+    title = db.Column(db.String(50), unique=False, nullable=False)
+    content = db.Column(db.Text, unique=False, nullable=False)
 
 
     def __repr__(self):
-        return f"Post Id: {self.id} --- Date: {self.date} --- Title: {self.title}"
+        return f"ImageFile('{self.image_file}', '{self.description}')"
+
+
+# class BlogPost(db.Model):
+#     # Setup the relationship to the User table
+#     users = db.relationship(User)
+
+#     # Model for the Blog Posts on Website
+#     id = db.Column(db.Integer, primary_key=True)
+#     # Notice how we connect the BlogPost to a particular author
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+#     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+#     title = db.Column(db.String(140), nullable=False)
+#     text = db.Column(db.Text, nullable=False)
+
+#     def __init__(self, title, text, user_id):
+#         self.title = title
+#         self.text = text
+#         self.user_id =user_id
+
+
+#     def __repr__(self):
+#         return f"Post Id: {self.id} --- Date: {self.date} --- Title: {self.title}"
 
 
 

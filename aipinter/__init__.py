@@ -43,9 +43,12 @@ from aipinter.core.views import core
 from aipinter.users.views import users
 from aipinter.error_pages.handlers import error_pages
 from aipinter.vision.views import vision
+from aipinter.camera.views import cam
+from aipinter.blogpost.views import blogpost
 
 app.register_blueprint(core)
 app.register_blueprint(users)
 app.register_blueprint(error_pages)
 app.register_blueprint(vision)
-
+app.register_blueprint(cam)
+app.register_blueprint(blogpost)
