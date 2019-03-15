@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from aipinter.models import User, BlogPost
 from aipinter.users.forms import RegisterForm, LoginForm, UpdateUserForm
 from aipinter import db
+
 users = Blueprint('users', __name__)
 
 @users.route('/register', methods=['POST', 'GET'])
@@ -29,6 +30,7 @@ def login():
     
     if current_user.is_authenticated:
         return redirect(url_for('core.index'))
+        
     form = LoginForm()
 
     if form.validate_on_submit():
