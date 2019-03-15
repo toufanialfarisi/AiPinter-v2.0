@@ -17,11 +17,6 @@ vision = Blueprint('vision', __name__)
 global graph 
 graph = tf.get_default_graph()
 
-@vision.route('/vision_list')
-def vision_list():
-    container = ImageFile.query.all()
-    return render_template('vision_list.html', container=container)
-
 
 @vision.route('/cvision', methods=['POST', 'GET'])
 @login_required
@@ -51,6 +46,8 @@ def cvision():
             file.save(image_path)
             # flash('upload success', 'success')
 
+
+
             image = image_path
             model = file2.filename
             model_dir = os.path.join(os.getcwd() +'/aipinter/static/image_model', model)
@@ -65,8 +62,11 @@ def cvision():
                 pred_val, pred_class = pred_processing(model, img_)
                 pred_val = pred_val[0]
                 pred_class = pred_class[0]
-                        
+
+            # image_path = image_path.split('/')[-2:]                        
             user = ImageFile(image_file=image_path, description=form.description.data, prediction_val=pred_val, prediction_class=pred_class)
+            
+
             db.session.add(user)
             db.session.commit()
             flash('Dideteksi = ' + str(pred_class) + ' , confidence = '+str(pred_val * 100)+' %', 'success')
@@ -78,3 +78,8 @@ def cvision():
         return redirect(url_for('vision.cvision',
                                     filename=filename))
     return render_template('cvision.html', form=form)
+
+@vision.route('/vision_list')
+def vision_list():
+    container = ImageFile.query.all()
+    return render_template('vision_list.html', container=container, os=os)

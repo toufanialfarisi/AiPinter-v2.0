@@ -6,9 +6,11 @@
         <article class="media content-section" style="text-align:center ; margin-left:auto ; margin-right:auto">
             <div class="media-body">
             <table width='100%'>
+                {% set dir1 = containers.image_file.split('/')[-2:][0] %}
+                {% set dir2 = containers.image_file.split('/')[-2:][1] %}
                 <tr>
-                    <td>
-                        <h2><img src="{{ containers.image_file  }}" width="50%" style="text-align:center ; border-radius: 0%; margin-left:auto ; margin-right:auto"></h2>
+                    <td> 
+                        <h2><img src="{{ os.path.join('static',dir1, dir2)  }}" width="50%" style="text-align:center ; border-radius: 0%; margin-left:auto ; margin-right:auto"></h2>
                     </td>
 
                     <td>

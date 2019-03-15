@@ -2,20 +2,23 @@
 {% block content %}
 
 <div class="col-md-12">
-        <form action="" method="POST" enctype="multipart/form-data">
-    
-          {{ form.hidden_tag() }}
-        <fieldset class="form-group">
-            <table width='100%'>
-              <tr>
-                <td>{{ form.search(class='form-control form-control-md') }}</td>
-                <td></td>
-                <td>{{ form.submit(class='btn btn-outline-info') }}</td>
-              </tr>
-            </table>
-        </fieldset>
-        </form>
-    </div>
+    <!-- <div class="content-section" style="margin-top:18px"> -->
+    <form action="" method="POST" enctype="multipart/form-data">
+
+      {{ form.hidden_tag() }}
+  <div class="content-section">
+    <fieldset class="form-group">
+        <table width='100%' style="margin-top:18px">
+          <tr>
+            <td>{{ form.search(class='form-control form-control-md') }}</td>
+            <td>{{ form.submit(class='btn btn-outline-info') }}</td>
+          </tr>
+        </table>
+    </fieldset>
+    </form>
+ </div>
+</div>
+
 
 <div class="col-md-12">
         {% for post in posts %}

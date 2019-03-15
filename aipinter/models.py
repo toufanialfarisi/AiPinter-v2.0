@@ -96,7 +96,7 @@ class ImageFile(db.Model):
         self.prediction_class = prediction_class
 
     def __repr__(self):
-        return f"image_file : {self.image_file}"
+        return f"image_file : {self.image_file} , img : {self.image_file}"
 
 
 class OCR(db.Model):
