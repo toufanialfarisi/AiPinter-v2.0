@@ -4,7 +4,7 @@
 {% if file_url %}
     <div class="content-section">
     <center>
-        <img class="img-circle" alt="" src="{{ file_url }}" width="30%" style="text-align:center ; border-radius: 10%;; margin-left:auto ; margin-right:auto"> 
+        <img class="img-circle" alt="" src="{{ url_for('static', filename= os.path.join('image_vision', filename)) }}" width="30%" style="text-align:center ; border-radius: 10%;; margin-left:auto ; margin-right:auto"> 
         <blockquote class="blockquote">
             <footer class="blockquote-footer">{{ form.description.data }}</footer>
         </blockquote>
@@ -46,6 +46,7 @@
             </div>
             {% endif %}
             {{ form.imagesize(class='form-control form-control-sd') }}
+            </fieldset>
 
             <fieldset class="form-group">
                 
