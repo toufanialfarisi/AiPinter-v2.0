@@ -10,6 +10,7 @@ import argparse
 import cv2
 import mahotas
 import face_recognition
+import numpy as np
 
 cam = Blueprint('camera', __name__)
 
@@ -23,10 +24,10 @@ def camera():
     else:
         if request.method == 'POST':
             data_cam = request.form['camera']
-            if data_cam == 'SSD_Mobile_Net':
+            if data_cam == 'SSD MobileNet':
                 req = 'ssd'
                 return render_template('camera.html', form=form_od, req=req)
-            elif data_cam == 'Ordinary_CNN':
+            elif data_cam == 'Ordinary CNN':
                 req = 'ord'
                 return render_template('camera.html', form=form_od, req=req)
             
@@ -60,77 +61,74 @@ def get_frame_od():
                                     help='Path to weights: '
                                         'MobileNetSSD_deploy.caffemodel for Caffe model or '
                                         )
-    parser.add_argument("--thr", default=0.2, type=float, help="confidence threshold to filter out weak detections")
+    # parser.add_argument("--thr", default=0.2, type=float, help="confidence threshold to filter out weak detections")
     args = parser.parse_args()
 
-    # Labels of Network.
-    classNames = { 0: 'background',
-        1: 'aeroplane', 2: 'bicycle', 3: 'bird', 4: 'boat',
-        5: 'bottle', 6: 'bus', 7: 'car', 8: 'cat', 9: 'chair',
-        10: 'cow', 11: 'diningtable', 12: 'dog', 13: 'horse',
-        14: 'motorbike', 15: 'person', 16: 'pottedplant',
-        17: 'sheep', 18: 'sofa', 19: 'train', 20: 'tvmonitor' }
 
+    CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
+        "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
+        "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
+        "sofa", "train", "tvmonitor"]
+    COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
+
+    # load our serialized model from disk
+    # print("[INFO] loading model...")
     net = cv2.dnn.readNetFromCaffe(args.prototxt, args.weights)
+
+    # load the input image and construct an input blob for the image
+    # by resizing to a fixed 300x300 pixels and then normalizing it
+    # (note: normalization is done via the authors of the MobileNet SSD
+    # implementation)
+    # image = cv2.imread(args["image"])
+    # (h, w) = image.shape[:2]
+    # blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)), 0.007843, (300, 300), 127.5)
+
+    # pass the blob through the network and obtain the detections and
+    # predictions
+    # print("[INFO] computing object detections...")
+
+
     while True:
-        retval, frame = camera.read()
-        frame = cv2.resize(frame,(400, 320))
-        frame_resized = frame
-        blob = cv2.dnn.blobFromImage(frame_resized, 0.007843, (300, 300), (127.5, 127.5, 127.5), False)
-        #Set to network the input blob 
+        # image = cv2.imread(args["image"])
+        retval, image = camera.read()
+        (h, w) = image.shape[:2]
+        blob = cv2.dnn.blobFromImage(cv2.resize(image, (100, 100)), 0.007843, (300, 300), 127.5)
         net.setInput(blob)
-        #Prediction of network
         detections = net.forward()
 
-        #Size of frame resize (300x300)
-        cols = frame_resized.shape[1] 
-        rows = frame_resized.shape[0]
+        # loop over the detections
+        for i in np.arange(0, detections.shape[2]):
+            # extract the confidence (i.e., probability) associated with the
+            # prediction
+            confidence = detections[0, 0, i, 2]
 
-        #For get the class and location of object detected, 
-        # There is a fix index for class, location and confidence
-        # value in @detections array .
-        for i in range(detections.shape[2]):
-            confidence = detections[0, 0, i, 2] #Confidence of prediction 
-            if confidence > args.thr: # Filter prediction 
-                class_id = int(detections[0, 0, i, 1]) # Class label
+            # filter out weak detections by ensuring the `confidence` is
+            # greater than the minimum confidence
+            if confidence > 0.2:
+                # extract the index of the class label from the `detections`,
+                # then compute the (x, y)-coordinates of the bounding box for
+                # the object
+                idx = int(detections[0, 0, i, 1])
+                box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+                (startX, startY, endX, endY) = box.astype("int")
 
-                # Object location 
-                xLeftBottom = int(detections[0, 0, i, 3] * cols) 
-                yLeftBottom = int(detections[0, 0, i, 4] * rows)
-                xRightTop   = int(detections[0, 0, i, 5] * cols)
-                yRightTop   = int(detections[0, 0, i, 6] * rows)
-                
-                # Factor for scale to original size of frame
-                heightFactor = frame.shape[0]/300.0  
-                widthFactor = frame.shape[1]/300.0 
-                # Scale object detection to frame
-                xLeftBottom = int(widthFactor * xLeftBottom) 
-                yLeftBottom = int(heightFactor * yLeftBottom)
-                xRightTop   = int(widthFactor * xRightTop)
-                yRightTop   = int(heightFactor * yRightTop)
-                # Draw location of object  
-                cv2.rectangle(frame, (xLeftBottom, yLeftBottom), (xRightTop, yRightTop),
-                            (255, 255, 0))
-
-                # Draw label and confidence of prediction in frame resized
-                if class_id in classNames:
-                    label = classNames[class_id] + ": " + str(confidence)
-                    labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
-
-                    yLeftBottom = max(yLeftBottom, labelSize[1])
-                    cv2.rectangle(frame, (xLeftBottom, yLeftBottom - labelSize[1]),
-                                        (xLeftBottom + labelSize[0], yLeftBottom + baseLine),
-                                        (255, 255, 255), cv2.FILLED)
-                    cv2.putText(frame, label, (xLeftBottom, yLeftBottom),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (100, 255, 0), 2)
+                # display the prediction
+                label = "{}: {:.2f}%".format(CLASSES[idx], confidence * 100)
+                print("[INFO] {}".format(label))
+                cv2.rectangle(image, (startX, startY), (endX, endY),
+                    COLORS[idx], 2)
+                y = startY - 15 if startY - 15 > 15 else startY + 15
+                cv2.putText(image, label, (startX, y),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
         
-        imgencode=cv2.imencode('.jpg',frame)[1]
+        imgencode=cv2.imencode('.jpg',image)[1]
         stringData=imgencode.tostring()
         yield (b'--frame\r\n'
             b'Content-Type: text/plain\r\n\r\n'+stringData+b'\r\n')
         i+=1
 
     del(camera)
+
 
 def get_frame():
     camera_port=0

@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout_vision.html" %}
 {% block content %}
 
 
@@ -15,7 +15,8 @@
 <legend class="border-bottom mb-4">Video streaming</legend>
 <div style="text-align:center ; margin-left:auto ; margin-right:auto">
     <img src="{{ url_for('camera.calc_ssd') }}">
-    <legend class="border-bottom mb-4">SSD MobileNet Mode</legend>
+    <!-- <legend class="border-bottom mb-4">SSD MobileNet Mode</legend> -->
+    <div style="margin-left:100px" class="content-section"> SSD MobileNet </div>
 </div>
 </fieldset>
 </div>
@@ -26,7 +27,7 @@
 <legend class="border-bottom mb-4">Video streaming</legend>
 <div style="text-align:center ; margin-left:auto ; margin-right:auto">
     <img src="{{ url_for('camera.calc_ord') }}">
-    <legend class="border-bottom mb-4">Orinary CNN Mode</legend>
+    <div style="margin-left:100px" class="content-section"> Ordinary CNN </div>
 </div>
 </fieldset>
 </div>
@@ -37,7 +38,7 @@
 <legend class="border-bottom mb-4">Video streaming</legend>
 <div style="text-align:center ; margin-left:auto ; margin-right:auto">
     <img src="{{ url_for('camera.calc_norm') }}">
-    <legend class="border-bottom mb-4">Normal Mode</legend>
+    <div style="margin-left:100px" class="content-section"> Normal Mode </div>
 </div>
 </fieldset>
 </div>
@@ -56,8 +57,8 @@
                                 {{ form.choose_cam.label(class='form-control-label') }}
                                 <select class="form-control form-control-lg" name="camera">
                                         <option>Normal</option>
-                                    <option>Ordinary_CNN</option>
-                                    <option>SSD_Mobile_Net</option>
+                                    <option>Ordinary CNN</option>
+                                    <option>SSD MobileNet</option>
                                 </select>
                                 
                 
