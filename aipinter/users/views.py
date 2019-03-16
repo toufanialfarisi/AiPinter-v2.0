@@ -35,19 +35,22 @@ def login():
 
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
+        try:
+            if user.check_password(form.password.data) and user is not None:
+            # if check_password_hash(user.password, form.password.data) and user is
 
-        if user.check_password(form.password.data) and user is not None:
-        # if check_password_hash(user.password, form.password.data) and user is
+                login_user(user)
+                flash('login success', 'success')
 
-            login_user(user)
-            flash('login success', 'success')
+                next = request.args.get('next')
 
-            next = request.args.get('next')
-
-            if next == None or not next[0] == '/':
-                next = url_for('core.index')
-            
-            return redirect(next)
+                if next == None or not next[0] == '/':
+                    next = url_for('core.index')
+                
+                return redirect(next)
+        except:
+            flash('there is no any acount registered in this app, be the first one !!', 'danger')
+            return redirect(url_for('users.register'))
     return render_template('login.html', form=form)
 
 @users.route('/logout')

@@ -57,6 +57,7 @@ def ocr():
 
             cnts = sorted([(c, cv2.boundingRect(c)[0]) for c in cnts], key = lambda x : x[1])
 
+            char = []
             for (c, _) in cnts:
                 (x, y, w, h) = cv2.boundingRect(c)
 
@@ -71,6 +72,7 @@ def ocr():
                     # cv2.imshow('thresh', thresh)
                     hist = hog.describe(thresh)
                     digit = model.predict([hist])[0]
+                    char.append(digit)
                     # print('I think that number is : {}'.format(digit))
 
                     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 1)
@@ -81,12 +83,22 @@ def ocr():
             img_file_path = os.path.join(os.getcwd() + '/aipinter/static/ocr_images', filename)
             cv2.imwrite(img_file_path, image)
 
-            ocr_img = OCR(image_file=img_file_path, description=form.description.data)
+            show_char = ''
+            for ch in char:
+                show_char = show_char + str(ch)
+            
+
+            ocr_img = OCR(image_file=img_file_path,ocr_out=show_char, description=form.description.data)
             db.session.add(ocr_img)
             db.session.commit()
 
             i = OCR.query.filter_by(id=ocr_img.id).first()
             flash('OCR sucessfully running', 'success')
-            return render_template('ocr.html', title='Vision',form=form, containers=i, os=os, desc=i.description)    
+            return render_template('ocr.html', title='Vision',form=form, containers=i, os=os, desc=i.description, char=show_char)    
 
     return render_template('ocr.html', title='Vision',form=form)     
+
+@ocreg.route('/ocr_list')
+def ocr_list():
+    ocr_data = OCR.query.all()
+    return render_template('ocr_list.html', container=ocr_data, os=os)

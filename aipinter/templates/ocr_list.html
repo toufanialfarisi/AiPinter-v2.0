@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+{% if current_user.is_authenticated %}
+        <div class="col-md-12">
+        {% for containers in container %}
+        <article class="media content-section" style="text-align:center ; margin-left:auto ; margin-right:auto">
+            <div class="media-body">
+            <table width='100%'>
+                {% set dir1 = containers.image_file.split('/')[-2:][0] %}
+                {% set dir2 = containers.image_file.split('/')[-2:][1] %}
+                <tr>
+                    
+                    <td> 
+                        <h2><img src="{{ os.path.join('static',dir1, dir2)  }}" width="50%" style="text-align:center ; border-radius: 0%; margin-left:auto ; margin-right:auto"></h2>
+                    </td>
+                    
+
+                    <td>
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-light"> Text Ouput :  {{ containers.ocr_out}}</li>
+                            <li class="list-group-item list-group-item-light"> Description : {{ containers.description }}</li>
+                        </ul>
+                    </td>
+
+                </tr>
+            </table>
+            
+            <!-- <p class="article-content">{{ containers.description }}</p> -->
+            
+            </div>
+        </article>
+        {% endfor %}
+        </div>
+        {% else %}
+
+{% endif %}
+
+{% endblock %}

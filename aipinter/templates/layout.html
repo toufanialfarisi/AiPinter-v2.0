@@ -40,7 +40,7 @@
             </div>
 
             <div class="navbar-nav">
-                <a class="nav-item nav-link" href="#">Post</a>
+                <a class="nav-item nav-link" href="{{ url_for('blogpost.post') }}">Post</a>
                 <a class="nav-item nav-link" href="{{url_for('users.logout')}}">Log out</a>
               
 
@@ -78,12 +78,14 @@
               <ul class="list-group">
                   {% if current_user.is_authenticated %}
                 <li class="list-group-item list-group-item-light"><a href="{{ url_for('vision.vision_list') }}">Vision List</a></li>
+                <li class="list-group-item list-group-item-light"><a href="{{ url_for('ocreg.ocr_list') }}">OCR List</a></li>
                 {% else %}
                 <li class="list-group-item list-group-item-light">Vision</li>
-                {% endif %}
                 <li class="list-group-item list-group-item-light">Chatbot</li>
                 <li class="list-group-item list-group-item-light">Forecasting</li>
                 <li class="list-group-item list-group-item-light">etc</li>
+                {% endif %}
+                
               </ul>
             </p>
           </div>

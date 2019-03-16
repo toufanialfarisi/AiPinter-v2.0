@@ -101,11 +101,13 @@ class ImageFile(db.Model):
 
 class OCR(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    image_file = db.Column(db.String(20), unique=False, nullable=False)
-    description = db.Column(db.Text, unique=False, nullable=False)
+    image_file = db.Column(db.String(20), unique=False)
+    ocr_out = db.Column(db.String(100), unique=False)
+    description = db.Column(db.Text, unique=False)
 
-    def __init__(self, image_file, description):
+    def __init__(self, image_file, ocr_out, description):
         self.image_file = image_file
+        self.ocr_out = ocr_out
         self.description = description
     
     def __repr__(self):
