@@ -1,8 +1,10 @@
+from __future__ import print_function, division, absolute_import
+
 from aipinter.models import ImageFile
 from aipinter.vision.vision_handler import vision_utility, allowed_file, pred_processing
 from aipinter.vision.forms import ComputerVisionForm
 from flask_login import current_user, login_required
-from flask import Blueprint, render_template, url_for, redirect, request, flash
+from flask import Blueprint, render_template, url_for, redirect, request, flash, jsonify
 from aipinter import app, ALLOWED_EXTENSIONS, secure_filename
 import os
 import tensorflow as tf
@@ -10,9 +12,13 @@ from keras.models import load_model
 import numpy as np
 import cv2
 from aipinter import db
+from aipinter.schema import ImageFileSchema
 import shutil
 
+tf.logging.set_verbosity(tf.logging.ERROR)
+
 vision = Blueprint('vision', __name__)
+# vision_api = Blueprint()
 
 global graph 
 graph = tf.get_default_graph()
@@ -83,3 +89,11 @@ def cvision():
 def vision_list():
     container = ImageFile.query.all()
     return render_template('vision_list.html', container=container, os=os)
+
+
+@vision.route('/vision_list/api')
+def vision_list_api():
+    container = ImageFile.query.all()
+    schema = ImageFileSchema(many=True)
+    output = schema.dump(container).data
+    return jsonify(output)

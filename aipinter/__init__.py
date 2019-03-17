@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from werkzeug.utils import secure_filename
+from flask_marshmallow import Marshmallow
 
 UPLOAD_FOLDER = os.getcwd() + '/aipinter/static/image_vision'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -15,6 +16,8 @@ app = Flask(__name__)
 # initiate databse using SQL ALCHEMY
 db = SQLAlchemy(app)
 
+# initiate flask marshamllow object
+ma = Marshmallow(app)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 

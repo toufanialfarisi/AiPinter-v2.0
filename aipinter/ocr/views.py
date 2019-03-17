@@ -2,7 +2,7 @@ from aipinter.ocr.hog import HOG
 import cv2
 import os
 import mahotas
-from flask import render_template, url_for, redirect, flash, Blueprint, request
+from flask import render_template, url_for, redirect, flash, Blueprint, request, jsonify
 from flask_login import login_required
 from aipinter.ocr.forms import OCRForm
 from werkzeug.utils import secure_filename
@@ -11,6 +11,7 @@ from sklearn.externals import joblib
 from aipinter.ocr import dataset
 from aipinter.models import OCR
 from aipinter import db
+from aipinter.schema import OCRSchema
 
 ocreg = Blueprint('ocreg', __name__)
 
@@ -102,3 +103,11 @@ def ocr():
 def ocr_list():
     ocr_data = OCR.query.all()
     return render_template('ocr_list.html', container=ocr_data, os=os)
+
+
+@ocreg.route('/ocr_list/api')
+def ocr_list_api():
+    ocr_data = OCR.query.all()
+    schema = OCRSchema(many=True)
+    output = schema.dump(ocr_data).data
+    return jsonify(output)
