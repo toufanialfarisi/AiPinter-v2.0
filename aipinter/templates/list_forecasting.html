@@ -9,10 +9,19 @@
                 <tr>
                     <td>
                         <ul class="list-group">
-                            <li class="list-group-item list-group-item-light"> Text Ouput :  {{ containers.ocr_out}}</li>
-                            <li class="list-group-item list-group-item-light"> Description : {{ containers.description }}</li>
+                            <li class="list-group-item list-group-item-light"> id  : {{ containers.id}}</li>
+                            <li class="list-group-item list-group-item-light"> Suhu minimum  : {{ containers.suhu_minimum}}</li>
+                            <li class="list-group-item list-group-item-light"> Suhu maksimum : {{ containers.suhu_maksimum }}</li>
+                            <li class="list-group-item list-group-item-light"> Suhu suhu_rata_rata : {{ containers.suhu_rata_rata }}</li>
+                            <li class="list-group-item list-group-item-light"> kelembapan_rata2x : {{ containers.kelembapan_rata2x }}</li>
+                            <li class="list-group-item list-group-item-light"> curah_hujan : {{ containers.curah_hujan }}</li>
+                            <li class="list-group-item list-group-item-light"> lama_penyinaran : {{ containers.lama_penyinaran }}</li>
+                            <li class="list-group-item list-group-item-light"> kecepatan_angin_rata2x : {{ containers.kecepatan_angin_rata2x }}</li>
+                            <li class="list-group-item list-group-item-light"> arah_angin_terbanyak : {{ containers.arah_angin_terbanyak }}</li>
+                            <li class="list-group-item list-group-item-light"> kecepatan_angin_terbesar : {{ containers.kecepatan_angin_terbesar }}</li>
+                            <li class="list-group-item list-group-item-light"> arah_angin_saat_max : {{ containers.arah_angin_saat_max }}</li>
                         </ul>
-                        <div style="margin-top:10px"><a href="http://localhost:5000/ocr_list/delete/{{ post }}"><button class="btn btn-outline-info" type="button">Delete</button></a></div> 
+                        <div style="margin-top:10px"><a href="http://localhost:5000/forecasting/delete/{{ containers.id }}"><button class="btn btn-outline-info" type="button">Delete</button></a></div> 
                     </td>
 
                 </tr>

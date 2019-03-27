@@ -1,10 +1,12 @@
 # forecasting/views.py
 # dataset_path = 'dataset/data_konsul_3.csv
 
-from flask import Blueprint, request, render_template, redirect, flash, url_for
+from flask import Blueprint, request, render_template, redirect, flash, url_for, jsonify
 from aipinter.forecasting.forms import ForecastingForm
 from aipinter.models import Forecasting
 from aipinter import db 
+from aipinter.schema import ForecastingSchema
+from flask_login import login_required
 from sklearn.tree import DecisionTreeClassifier
 import pickle
 import numpy as np 
@@ -15,6 +17,7 @@ def printkan(data):
     print(data)
 
 @forecasting.route('/forecasting', methods=['GET', 'POST'])
+@login_required
 def fcasting():
     form = ForecastingForm()
     if request.method == 'POST' and form.validate():
@@ -87,7 +90,38 @@ def fcasting():
 
 
 
-        
-        # return redirect(url_for('forecasting.fcasting'))
+        view = Forecasting.query.all()
+        return redirect(url_for('forecasting.forecasting_list'))
     return render_template('forecasting.html', form=form)
+
+@forecasting.route('/forecasting/list')
+@login_required
+def forecasting_list():
+    view = Forecasting.query.all()
+    try:
+        view_one = Forecasting.query.first()
+        return render_template('list_forecasting.html', container=view.id)
+    except:
+        flash('No Data available', 'danger')
+        return render_template('list_forecasting.html', container='')
+    # return render_template('list_forecasting.html', container=view)
+
+@forecasting.route('/forecasting/delete/<int:id>')
+@login_required
+def fcast_delete(id):
+
+    del_ocr = Forecasting.query.filter_by(id=id).first()
+    db.session.delete(del_ocr)
+    db.session.commit()
+    return redirect(url_for('forecasting.forecasting_list'))
+
+
+
+@forecasting.route('/forecasting/api', methods=['POST', 'GET'])
+@login_required
+def api():
+    fcast = Forecasting.query.all()
+    fcast_schema = ForecastingSchema(many=True)
+    output = fcast_schema.dump(fcast).data
+    return jsonify(output)
 

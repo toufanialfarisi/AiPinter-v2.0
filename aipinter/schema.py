@@ -1,5 +1,5 @@
 from aipinter import ma
-from aipinter.models import BlogPost, ImageFile, OCR
+from aipinter.models import BlogPost, ImageFile, OCR, Forecasting
 
 class UserPostSchema(ma.ModelSchema):
     class Meta:
@@ -12,6 +12,10 @@ class ImageFileSchema(ma.ModelSchema):
 class OCRSchema(ma.ModelSchema):
     class Meta:
         model = OCR
+
+class ForecastingSchema(ma.ModelSchema):
+    class Meta:
+        model = Forecasting
 
 
 
