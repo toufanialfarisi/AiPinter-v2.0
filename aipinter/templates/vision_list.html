@@ -18,7 +18,9 @@
                             <li class="list-group-item list-group-item-light"> Confidence :  {{ containers.prediction_val * 100}}</li>
                             <li class="list-group-item list-group-item-light"> Class :  {{ containers.prediction_class }}</li>
                             <li class="list-group-item list-group-item-light"> Description : {{ containers.description }}</li>
+    
                         </ul>
+                         <div style="margin-top:10px"><a href="http://localhost:5000/vision_list/delete/{{ post }}"><button class="btn btn-outline-info" type="button">Delete</button></a></div> 
                     </td>
 
                 </tr>

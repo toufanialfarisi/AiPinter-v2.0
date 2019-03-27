@@ -100,9 +100,12 @@ class ImageFile(db.Model):
 
 
 class OCR(db.Model):
+
+    __tablename__ = 'ocr'
+
     id = db.Column(db.Integer, primary_key = True)
     image_file = db.Column(db.String(20), unique=False)
-    ocr_out = db.Column(db.String(100), unique=False)
+    ocr_out = db.Column(db.String(50), unique=False)
     description = db.Column(db.Text, unique=False)
 
     def __init__(self, image_file, ocr_out, description):
@@ -112,5 +115,35 @@ class OCR(db.Model):
     
     def __repr__(self):
         return f"image_file : {self.image_file}, description {self.description}"
+
+class Forecasting(db.Model):
+
+    __tablename__ = 'forecasting'
+
+    id = db.Column(db.Integer, primary_key=True)
+    suhu_minimum = db.Column(db.Float)
+    suhu_maksimum = db.Column(db.Float)
+    suhu_rata_rata = db.Column(db.Float)
+    kelembapan_rata2x = db.Column(db.Float)
+    curah_hujan = db.Column(db.Float)
+    lama_penyinaran = db.Column(db.Float)
+    kecepatan_angin_rata2x = db.Column(db.Float)
+    arah_angin_terbanyak = db.Column(db.Float)
+    kecepatan_angin_terbesar = db.Column(db.Float)
+    arah_angin_saat_max = db.Column(db.Float)
+
+    def __repr__(self):
+        return f"data with suhu minimum = {self.suhu_minimum} was added"
+
+    
+
+    
+
+
+
+
+
+
+
 
     

@@ -3,6 +3,7 @@ from aipinter.core.forms import SearchForm
 from aipinter.models import BlogPost
 from aipinter import db
 from aipinter.schema import UserPostSchema
+from flask_login import login_required
 
 core = Blueprint('core', __name__)
 
@@ -27,7 +28,8 @@ def index():
     return render_template('home.html', form=form, mypost=post)
 
 
-@core.route('/list_post/api', methods=['GET', 'POST'])
+@core.route('/api/post', methods=['GET', 'POST'])
+@login_required
 def api():
     blog = BlogPost.query.all()
     user_schema = UserPostSchema(many=True)

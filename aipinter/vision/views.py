@@ -86,12 +86,32 @@ def cvision():
     return render_template('cvision.html', form=form)
 
 @vision.route('/vision_list')
+@login_required
 def vision_list():
     container = ImageFile.query.all()
-    return render_template('vision_list.html', container=container, os=os)
+    try:
+        one_cont = ImageFile.query.first()
+        return render_template('vision_list.html', container=container, os=os, post=one_cont.id)
+    except:
+        flash('No Image Available', 'danger')
+        return render_template('vision_list.html', container=container, os=os, post=None)
 
 
-@vision.route('/vision_list/api')
+@vision.route('/vision_list/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def vision_delete(id):
+    vis = ImageFile.query.filter_by(id=id).first()
+    # container = ImageFile.query.all()
+    db.session.delete(vis)
+    db.session.commit()
+    flash('image was successfully deleted', 'success')
+    return redirect(url_for('vision.vision_list'))
+
+
+
+
+@vision.route('/api/vision')
+@login_required
 def vision_list_api():
     container = ImageFile.query.all()
     schema = ImageFileSchema(many=True)

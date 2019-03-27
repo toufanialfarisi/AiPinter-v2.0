@@ -1,4 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
+<div class="content-section">
+
+    <form action="" method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Forecasting</legend>
+        </fieldset>
+        {% for field in form %}
+        <fieldset class="form-group">
+                {{ field.label(class='form-control-label') }}
+                {{ field(class='form-control form-control-lg') }}
+        </fieldset>        
+        {% endfor %}
+        <fieldset class="form-group">
+            <input type="submit" class="btn btn-outline-info" value="Update">
+        </fieldset>
+    </form>
+    
+</div>
 
 {% endblock %}

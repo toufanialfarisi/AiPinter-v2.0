@@ -49,6 +49,7 @@ from aipinter.vision.views import vision
 from aipinter.camera.views import cam
 from aipinter.blogpost.views import blogpost
 from aipinter.ocr.views import ocreg
+from aipinter.forecasting.views import forecasting
 
 app.register_blueprint(core)
 app.register_blueprint(users)
@@ -57,3 +58,4 @@ app.register_blueprint(vision)
 app.register_blueprint(cam)
 app.register_blueprint(blogpost)
 app.register_blueprint(ocreg)
+app.register_blueprint(forecasting)

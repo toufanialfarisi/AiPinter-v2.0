@@ -21,13 +21,24 @@
 </fieldset>
 </div>
 
-{% elif req == 'ord' %}
+{% elif req == 'dlib' %}
 <div class="col-md-8">
 <fieldset class="form-group">
 <legend class="border-bottom mb-4">Video streaming</legend>
 <div style="text-align:center ; margin-left:auto ; margin-right:auto">
-    <img src="{{ url_for('camera.calc_ord') }}">
-    <div style="margin-left:100px" class="content-section"> Ordinary CNN </div>
+    <img src="{{ url_for('camera.calc_dlib') }}">
+    <div style="margin-left:100px" class="content-section"> DLIB Face Recognition </div>
+</div>
+</fieldset>
+</div>
+
+{% elif req == 'res10' %}
+<div class="col-md-8">
+<fieldset class="form-group">
+<legend class="border-bottom mb-4">Video streaming</legend>
+<div style="text-align:center ; margin-left:auto ; margin-right:auto">
+    <img src="{{ url_for('camera.calc_res10') }}">
+    <div style="margin-left:100px" class="content-section"> ResNet10 Face Recognition </div>
 </div>
 </fieldset>
 </div>
@@ -56,9 +67,10 @@
                         <fieldset class="form-group">
                                 {{ form.choose_cam.label(class='form-control-label') }}
                                 <select class="form-control form-control-lg" name="camera">
-                                        <option>Normal</option>
-                                    <option>Ordinary CNN</option>
-                                    <option>SSD MobileNet</option>
+                                        <option value="Normal">Normal</option>
+                                    <option value="DLIB Face Recognition">DLIB Face Recognition</option>
+                                    <option value="ResNet10 Face Recognition">ResNet10 Face Recognition</option>
+                                    <option value="SSD MobileNet">SSD MobileNet</option>
                                 </select>
                                 
                 

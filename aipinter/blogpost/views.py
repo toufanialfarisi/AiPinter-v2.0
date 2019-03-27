@@ -22,6 +22,7 @@ def post():
         return redirect(url_for('core.login'))
 
 @blogpost.route('/edit/<int:id>', methods=['POST', 'GET'])
+@login_required
 def edit(id):
     form = Post()
     post = BlogPost.query.get(id)
@@ -38,6 +39,7 @@ def edit(id):
         return render_template('edit_post.html', form=form, post=post)
 
 @blogpost.route('/delete/<int:id>', methods=['POST','GET'])
+@login_required
 def delete(id):
     post = BlogPost.query.filter_by(id_post=id).first()
     db.session.delete(post)
@@ -46,6 +48,7 @@ def delete(id):
     return redirect(url_for('core.index'))
 
 @blogpost.route('/search', methods=['POST', 'GET'])
+@login_required
 def search():
     searchForm = SearchForm()
     post = Post_article.query

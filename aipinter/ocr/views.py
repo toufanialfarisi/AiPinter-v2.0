@@ -100,12 +100,27 @@ def ocr():
     return render_template('ocr.html', title='Vision',form=form)     
 
 @ocreg.route('/ocr_list')
+@login_required
 def ocr_list():
     ocr_data = OCR.query.all()
-    return render_template('ocr_list.html', container=ocr_data, os=os)
+    try:
+        ocr_one = OCR.query.first()
+        return render_template('ocr_list.html', container=ocr_data, os=os, post=ocr_one.id)
+    except:
+        flash('No Image Available', 'danger')
+        return render_template('ocr_list.html', container=ocr_data, os=os, post=None)
+        
 
+@ocreg.route('/ocr_list/delete/<int:id>')
+@login_required
+def ocr_list_delete(id):
+    del_ocr = OCR.query.filter_by(id=id).first()
+    db.session.delete(del_ocr)
+    db.session.commit()
+    return redirect(url_for('ocreg.ocr_list'))
 
-@ocreg.route('/ocr_list/api')
+@ocreg.route('/api/ocr')
+@login_required
 def ocr_list_api():
     ocr_data = OCR.query.all()
     schema = OCRSchema(many=True)

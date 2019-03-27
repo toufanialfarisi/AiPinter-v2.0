@@ -6,16 +6,20 @@ from aipinter.camera.hog import HOG
 from aipinter import dataset
 from flask import Blueprint, render_template, url_for, request, flash, redirect, jsonify, Response
 from flask_login import current_user, login_required
+from imutils.video import VideoStream
+import imutils
 import argparse
 import cv2
 import mahotas
 import face_recognition
 import numpy as np
+import time
 
 cam = Blueprint('camera', __name__)
 
 
 @cam.route('/camera', methods=['POST', 'GET'])
+@login_required
 def camera():
     form_od = ObjectDetectionForm()
     if current_user.is_authenticated == False:
@@ -27,8 +31,12 @@ def camera():
             if data_cam == 'SSD MobileNet':
                 req = 'ssd'
                 return render_template('camera.html', form=form_od, req=req)
-            elif data_cam == 'Ordinary CNN':
-                req = 'ord'
+            elif data_cam == 'DLIB Face Recognition':
+                req = 'dlib'
+                return render_template('camera.html', form=form_od, req=req)
+            
+            elif data_cam == 'ResNet10 Face Recognition':
+                req = 'res10'
                 return render_template('camera.html', form=form_od, req=req)
             
             else:
@@ -44,7 +52,7 @@ def gen():
             b'Content-Type: text/plain\r\n\r\n'+str(i)+b'\r\n')
         i+=1
 
-def get_frame_od():
+def get_frame_ssd():
     camera_port=0
     ramp_frames=100
     camera=cv2.VideoCapture(camera_port) #this makes a web cam object
@@ -53,11 +61,11 @@ def get_frame_od():
 
     parser = argparse.ArgumentParser(description='Script to run MobileNet-SSD object detection network ')
     parser.add_argument("--video", help="path to video file. If empty, camera's stream will be used")
-    parser.add_argument("--prototxt", default="aipinter/dnn/MobileNetSSD_deploy.prototxt.txt",
+    parser.add_argument("--prototxt", default="aipinter/dnn/mobileNet_ssd/MobileNetSSD_deploy.prototxt.txt",
                                     help='Path to text network file: '
                                         'MobileNetSSD_deploy.prototxt for Caffe model or '
                                         )
-    parser.add_argument("--weights", default="aipinter/dnn/MobileNetSSD_deploy.caffemodel",
+    parser.add_argument("--weights", default="aipinter/dnn/mobileNet_ssd/MobileNetSSD_deploy.caffemodel",
                                     help='Path to weights: '
                                         'MobileNetSSD_deploy.caffemodel for Caffe model or '
                                         )
@@ -130,7 +138,7 @@ def get_frame_od():
     del(camera)
 
 
-def get_frame():
+def get_frame_dlib():
     camera_port=0
     ramp_frames=100
     camera=cv2.VideoCapture(camera_port) #this makes a web cam object
@@ -205,9 +213,9 @@ def get_frame():
             cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
             # Draw a label with a name below the face
-            cv2.rectangle(frame, (left, top - 35), (right, top), (0, 0, 255), cv2.FILLED)
+            # cv2.rectangle(frame, (left, top - 35), (right, top), (0, 0, 255), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frame, name, (left + 6, top - 6), font, 1.0, (255, 255, 255), 1)
+            # cv2.putText(frame, name, (left + 6, top - 6), font, 1.0, (255, 255, 255), 1)
     
         imgencode=cv2.imencode('.jpg',frame)[1]
         stringData=imgencode.tostring()
@@ -236,6 +244,85 @@ def get_frame_norm():
 
     del(camera)
 
+def get_frame_res10():
+
+    camera_port=0
+    ramp_frames=100
+    camera=cv2.VideoCapture(camera_port) #this makes a web cam object
+
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--prototxt", default="aipinter/dnn/res10/deploy.prototxt.txt",
+        help="path to Caffe 'deploy' prototxt file")
+    ap.add_argument("--model", default="aipinter/dnn/res10/res10_300x300_ssd_iter_140000.caffemodel",
+        help="path to Caffe pre-trained model")
+    ap.add_argument("--confidence", type=float, default=0.5,
+        help="minimum probability to filter weak detections")
+    args = vars(ap.parse_args())
+
+    # load our serialized model from disk
+    print("[INFO] loading model...")
+    try:
+        net = cv2.dnn.readNetFromCaffe("aipinter/dnn/res10/deploy.prototxt.txt", "aipinter/dnn/res10/res10_300x300_ssd_iter_140000.caffemodel")
+        print('success to load the model')
+    except:
+        print('model failed to load')
+
+    # initialize the video stream and allow the cammera sensor to warmup
+    # print("[INFO] starting video stream...")
+    # vs = VideoStream(src=0).start()
+    # time.sleep(2.0)
+
+    # loop over the frames from the video stream
+    while True:
+        # grab the frame from the threaded video stream and resize it
+        # to have a maximum width of 400 pixels
+        _, frame = camera.read()
+        frame = imutils.resize(frame, width=400)
+    
+        # grab the frame dimensions and convert it to a blob
+        (h, w) = frame.shape[:2]
+        blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 1.0,
+            (300, 300), (104.0, 177.0, 123.0))
+    
+        # pass the blob through the network and obtain the detections and
+        # predictions
+        net.setInput(blob)
+        detections = net.forward()
+
+        # loop over the detections
+        for i in range(0, detections.shape[2]):
+            # extract the confidence (i.e., probability) associated with the
+            # prediction
+            confidence = detections[0, 0, i, 2]
+
+            # filter out weak detections by ensuring the `confidence` is
+            # greater than the minimum confidence
+            if confidence < args["confidence"]:
+                continue
+
+            # compute the (x, y)-coordinates of the bounding box for the
+            # object
+            box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+            (startX, startY, endX, endY) = box.astype("int")
+    
+            # draw the bounding box of the face along with the associated
+            # probability
+            text = "{:.2f}%".format(confidence * 100)
+            y = startY - 10 if startY - 10 > 10 else startY + 10
+            cv2.rectangle(frame, (startX, startY), (endX, endY),
+                (0, 0, 255), 2)
+            cv2.putText(frame, text, (startX, y),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+        
+        imgencode=cv2.imencode('.jpg',frame)[1]
+        stringData=imgencode.tostring()
+        yield (b'--frame\r\n'
+            b'Content-Type: text/plain\r\n\r\n'+stringData+b'\r\n')
+        i+=1
+    del(camera)
+
+
 # @camera.route('/calc')
 @cam.route('/calc')
 def calc():
@@ -243,23 +330,34 @@ def calc():
     form_od = ObjectDetectionForm()
     data_cam = 'SSD MOBILE NET'
     if data_cam == 'SSD MOBILE NET':
-        return Response(get_frame_od(),mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif data_cam == 'Ordinary_CNN':
-        return Response(get_frame(),mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(get_frame_ssd(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif data_cam == 'DLIB Face Recognition':
+        return Response(get_frame_dlib(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif data_cam == 'ResNet10 Face Recognition':
+        return Response(get_frame_res10(),mimetype='multipart/x-mixed-replace; boundary=frame')
     else:
         return Response(get_frame_norm(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
     return request(url_for('camera.calc_ord'))
 
 @cam.route('/calc_ssd')
+@login_required
 def calc_ssd():
-    return Response(get_frame_od(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(get_frame_ssd(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@cam.route('/calc_ord')
-def calc_ord():
-    return Response(get_frame(),mimetype='multipart/x-mixed-replace; boundary=frame')
+@cam.route('/calc_dlib')
+@login_required
+def calc_dlib():
+    return Response(get_frame_dlib(),mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@cam.route('/calc_res10')
+@login_required
+def calc_res10():
+    return Response(get_frame_res10(),mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 @cam.route('/calc_norm')
+@login_required
 def calc_norm():
     return Response(get_frame_norm(),mimetype='multipart/x-mixed-replace; boundary=frame')
 

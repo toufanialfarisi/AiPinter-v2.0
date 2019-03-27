@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+
+    <form action="" method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Forecasting</legend>
+                {{ form.suhu_minimum.label(class='form-control-label') }}
+                {{ form.suhu_minimum(class='form-control form-control-lg') }}
+        </fieldset>
+
+        <fieldset class="form-group">
+                {{ form.suhu_maksimum.label(class='form-control-label') }}
+                {{ form.suhu_maksimum(class='form-control form-control-lg') }}
+        </fieldset>
+        <fieldset class="form-group">
+                {{ form.suhu_rata_rata.label(class='form-control-label') }}
+                {{ form.suhu_rata_rata(class='form-control form-control-lg') }}
+        </fieldset>
+        <fieldset class="form-group">
+                {{ form.kelembapan_rata2x.label(class='form-control-label') }}
+                {{ form.kelembapan_rata2x(class='form-control form-control-lg') }}
+        </fieldset>
+        <fieldset class="form-group">
+                {{ form.curah_hujan.label(class='form-control-label') }}
+                {{ form.curah_hujan(class='form-control form-control-lg') }}
+        </fieldset>
+        <fieldset class="form-group">
+                {{ form.lama_penyinaran.label(class='form-control-label') }}
+                {{ form.lama_penyinaran(class='form-control form-control-lg') }}
+        </fieldset>
+        <fieldset class="form-group">
+                {{ form.kecepatan_angin_rata2x.label(class='form-control-label') }}
+                {{ form.kecepatan_angin_rata2x(class='form-control form-control-lg') }}
+        </fieldset>
+        <fieldset class="form-group">
+                {{ form.arah_angin_terbanyak.label(class='form-control-label') }}
+                {{ form.arah_angin_terbanyak(class='form-control form-control-lg') }}
+        </fieldset>
+        <fieldset class="form-group">
+                {{ form.kecepatan_angin_terbesar.label(class='form-control-label') }}
+                {{ form.kecepatan_angin_terbesar(class='form-control form-control-lg') }}
+        </fieldset>
+        <fieldset class="form-group">
+                {{ form.arah_angin_saat_max.label(class='form-control-label') }}
+                {{ form.arah_angin_saat_max(class='form-control form-control-lg') }}
+        </fieldset>
+
+        <fieldset class="form-group">
+            {{ form.submit(class='btn btn-outline-info') }}
+        </fieldset>
+    </form>
+    
+</div>
+
+{% endblock %}
